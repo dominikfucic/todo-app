@@ -30,16 +30,16 @@ export default function TodoProvider({
   const [selected, setSelected] = React.useState<TodoType | null>(null);
 
   React.useEffect(() => {
-    axios
-      .get("/api/todos")
-      .then((res) => console.log(res.data))
-      .catch((error: AxiosError) => {
-        if (error.code === AxiosError.ERR_NETWORK) {
-          setError(error.message);
-        } else {
-          setError("Something went wrong.");
-        }
-      });
+    // axios
+    //   .get("/api/todos")
+    //   .then((res) => console.log(res.data))
+    //   .catch((error: AxiosError) => {
+    //     if (error.code === AxiosError.ERR_NETWORK) {
+    //       setError(error.message);
+    //     } else {
+    //       setError("Something went wrong.");
+    //     }
+    //   });
   });
 
   function removeTodo(id: number) {
