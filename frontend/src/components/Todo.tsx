@@ -2,8 +2,8 @@ import React from "react";
 import { IconTrash, IconEdit } from "@tabler/icons-react";
 import { Input, ActionIcon, Group, Modal, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { TodoContext } from "../../TodoProvider";
-import { TodoType } from "../../TodoProvider";
+import { TodoContext } from "./TodoProvider";
+import { TodoType } from "./TodoProvider";
 
 export default function Todo({ todo }: { todo: TodoType }) {
   const inputRef = React.useRef<HTMLInputElement>(null);

@@ -7,11 +7,11 @@ import {
   Grid,
   Button,
 } from "@mantine/core";
-import Todo from "./components/Todo/Todo";
+import Todo from "./components/Todo";
 import { IconPlus } from "@tabler/icons-react";
 import React from "react";
-import { TodoContext } from "./TodoProvider";
-import { TodoType } from "./TodoProvider";
+import { TodoContext } from "./components/TodoProvider";
+import { TodoType } from "./components/TodoProvider";
 
 function App() {
   const todoContext = React.useContext(TodoContext);
