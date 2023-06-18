@@ -124,6 +124,7 @@ describe("/api/users", () => {
     it("should make new user and return token", async () => {
       req = {
         body: {
+          fullName: "Test User",
           email: "test@mail.com",
           password: "12345",
         },
@@ -133,6 +134,7 @@ describe("/api/users", () => {
       crypto.randomBytes = jest.fn().mockReturnValue("randomBytes");
 
       const user = {
+        fullName: req.body.fullName,
         email: req.body.email,
         salt: "randomBytes",
         password: crypto.pbkdf2Sync(
@@ -164,6 +166,7 @@ describe("/api/users", () => {
     it("should return an error if user already exists", async () => {
       req = {
         body: {
+          fullName: "Test User",
           email: "test@mail.com",
           password: "12345",
         },
@@ -173,6 +176,7 @@ describe("/api/users", () => {
       crypto.randomBytes = jest.fn().mockReturnValue("randomBytes");
 
       const user = {
+        fullName: req.body.fullName,
         email: req.body.email,
         salt: "randomBytes",
         password: crypto.pbkdf2Sync(

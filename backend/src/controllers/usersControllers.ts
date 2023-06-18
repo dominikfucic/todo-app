@@ -59,6 +59,7 @@ export const signup: Handler = async (req, res, next) => {
           return;
         }
         const user: User = {
+          fullName: req.body.fullName,
           email: req.body.email,
           password: hashedPassword,
           salt: salt,
