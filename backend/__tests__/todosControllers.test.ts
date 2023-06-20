@@ -29,11 +29,11 @@ describe("/todos", () => {
       body: {
         title: "test",
       },
-      userId: new mongoose.Types.ObjectId(),
+      userId: "mockedId",
     } as any as Request;
 
     const todo = {
-      _id: new mongoose.Types.ObjectId(),
+      _id: "mockedId",
       title: req.body.title,
       completed: false,
       userId: req.userId,
@@ -51,7 +51,7 @@ describe("/todos", () => {
   it("should delete todo", async () => {
     req = {
       params: {
-        id: new mongoose.Types.ObjectId(),
+        id: "mockedId",
       },
     } as any as Request;
 
@@ -70,7 +70,7 @@ describe("/todos", () => {
         title: "updated todo",
       },
       params: {
-        id: new mongoose.Types.ObjectId(),
+        id: "mockedId",
       },
     } as any as Request;
 
@@ -87,12 +87,12 @@ describe("/todos", () => {
 
   it("should get todos", async () => {
     req = {
-      userId: new mongoose.Types.ObjectId(),
+      userId: "mockedId",
     } as any as Request;
 
     const todos = [
       {
-        _id: new mongoose.Types.ObjectId(),
+        _id: "mockedId",
         title: "todo 1",
         completed: false,
         userId: req.userId,

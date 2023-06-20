@@ -1,9 +1,8 @@
 import { Response, Request, NextFunction } from "express";
-import mongoose from "mongoose";
-import { login, signup } from "../src/controllers/usersControllers";
+import { getUser, login, signup } from "../src/controllers/usersControllers";
 import { User } from "../src/models/User";
 import crypto from "node:crypto";
-import jwt, { sign } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { MongoServerError } from "mongodb";
 
 describe("/api/users", () => {
@@ -46,7 +45,7 @@ describe("/api/users", () => {
           email: "test@mail.com",
           password: "12345",
         },
-        userId: new mongoose.Types.ObjectId(),
+        userId: "mockedId",
       } as any as Request;
 
       crypto.randomBytes = jest.fn().mockReturnValue("randomBytes");
@@ -85,7 +84,7 @@ describe("/api/users", () => {
           email: "test@mail.com",
           password: "12345",
         },
-        userId: new mongoose.Types.ObjectId(),
+        userId: "mockedId",
       } as any as Request;
 
       crypto.randomBytes = jest.fn().mockReturnValue("randomBytes");
@@ -128,7 +127,7 @@ describe("/api/users", () => {
           email: "test@mail.com",
           password: "12345",
         },
-        userId: new mongoose.Types.ObjectId(),
+        userId: "mockedId",
       } as any as Request;
 
       crypto.randomBytes = jest.fn().mockReturnValue("randomBytes");
@@ -170,7 +169,7 @@ describe("/api/users", () => {
           email: "test@mail.com",
           password: "12345",
         },
-        userId: new mongoose.Types.ObjectId(),
+        userId: "mockedId",
       } as any as Request;
 
       crypto.randomBytes = jest.fn().mockReturnValue("randomBytes");
@@ -205,6 +204,51 @@ describe("/api/users", () => {
       expect(res.json).toHaveBeenCalledWith({
         message: "User already exists.",
       });
+      expect(next).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("POST /getUser", () => {
+    it("should authenticate user and return user", async () => {
+      const req = {
+        userId: "mockedId",
+      } as any as Request;
+
+      const user = {
+        _id: "mockedId",
+        fullName: "Test User",
+        email: "test@mail.com",
+      };
+
+      User.findById = jest.fn().mockReturnValue({
+        select: jest.fn().mockResolvedValue(user),
+      });
+
+      await getUser(req, res, next);
+
+      expect(User.findById).toHaveBeenCalledWith(req.userId);
+      expect(User.findById(req.userId).select).toHaveBeenCalledWith(
+        "-password -salt"
+      );
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(user);
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it("should return an error if user is not found", async () => {
+      const req = {
+        userId: "mockedId",
+      } as any as Request;
+
+      User.findById = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue(null),
+      });
+
+      await getUser(req, res, next);
+
+      expect(User.findById).toHaveBeenCalledWith(req.userId);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: "Unauthorized." });
       expect(next).not.toHaveBeenCalled();
     });
   });

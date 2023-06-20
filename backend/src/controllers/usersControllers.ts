@@ -26,13 +26,9 @@ export const login: Handler = async (req, res, next) => {
           return;
         }
         if (crypto.timingSafeEqual(user.password as Buffer, password)) {
-          const token = jwt.sign(
-            { userId: user._id },
-            "../../../private_key.pem",
-            {
-              expiresIn: "1h",
-            }
-          );
+          const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+          });
           res.status(200).json({ token });
         } else {
           res.status(404).json({ message: "Incorrect password." });
@@ -70,18 +66,29 @@ export const signup: Handler = async (req, res, next) => {
           if (error instanceof MongoServerError && error.code === 11000) {
             res.status(409).json({ message: "User already exists." });
             return;
+          } else {
+            throw new Error(error);
           }
         }
-        const token = jwt.sign(
-          { userId: user._id },
-          "../../../private_key.pem",
-          {
-            expiresIn: "7d",
-          }
-        );
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+          expiresIn: "7d",
+        });
         res.status(200).json({ token });
       }
     );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUser: Handler = async (req, res, next) => {
+  try {
+    let user = await User.findById(req.userId).select("-password -salt");
+    if (!user) {
+      res.status(401).json({ message: "Unauthorized." });
+      return;
+    }
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }
