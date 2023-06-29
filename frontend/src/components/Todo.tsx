@@ -2,8 +2,7 @@ import React from "react";
 import { IconTrash, IconEdit } from "@tabler/icons-react";
 import { Input, ActionIcon, Group, Modal, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { TodoContext } from "./TodoProvider";
-import { TodoType } from "./TodoProvider";
+import { TodoContext } from "../providers/TodoProvider";
 
 export default function Todo({ todo }: { todo: TodoType }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -43,7 +42,7 @@ export default function Todo({ todo }: { todo: TodoType }) {
         <Group mt="md">
           <Button
             onClick={() => {
-              todoContext?.editTodo(todo.id, value);
+              todoContext?.editTodo(todo._id, value);
               close();
             }}
           >
@@ -58,7 +57,7 @@ export default function Todo({ todo }: { todo: TodoType }) {
         sx={todo.completed ? { textDecoration: "line-through" } : {}}
         size="md"
         rightSection={
-          todoContext?.selected?.id === todo.id && (
+          todoContext?.selected?._id === todo._id && (
             <Group spacing={5}>
               {!todo.completed && (
                 <ActionIcon variant="transparent" onClick={open}>
@@ -68,7 +67,7 @@ export default function Todo({ todo }: { todo: TodoType }) {
               <ActionIcon
                 variant="transparent"
                 onClick={() =>
-                  todo.id ? todoContext?.removeTodo(todo.id) : null
+                  todo._id ? todoContext?.removeTodo(todo._id) : null
                 }
               >
                 <IconTrash size="1.5rem" />

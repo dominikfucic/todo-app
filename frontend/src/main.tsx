@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import TodoProvider from "./components/TodoProvider.tsx";
+import TodoProvider from "./providers/TodoProvider.tsx";
 import { MantineProvider } from "@mantine/core";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Login from "./components/Login.tsx";
-import Register from "./components/Register.tsx";
+import Login from "./pages/Login.tsx";
+import Register from "./pages/Register.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
-import AuthProvider from "./components/AuthProvider.tsx";
+import AuthProvider from "./providers/AuthProvider.tsx";
 
 const router = createBrowserRouter([
   {

@@ -2,13 +2,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Jest Tests",
+      "name": "Backend",
       "type": "node",
       "request": "launch",
-      "runtimeArgs": ["--inspect-brk", "${workspaceRoot}/backend/node_modules/jest/bin/jest.js", "--runInBand"],
+      "runtimeArgs": ["--inspect-brk", "${workspaceRoot}/backend/node_modules/jest/bin/jest.js", "--runInBand", "--config", "jest.config.js"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "cwd": "${workspaceFolder}/backend"
-    }
+    },
+    {
+      "name": "Frontend",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": ["--inspect-brk", "${workspaceRoot}/backend/node_modules/jest/bin/jest.js", "--runInBand", "--config", "jest.config.js"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceFolder}/frontend"
+    },
   ]
 }
