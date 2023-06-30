@@ -16,7 +16,6 @@ import { useForm } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
 
 export default function Login() {
-  const [error, setError] = React.useState("");
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -31,20 +30,20 @@ export default function Login() {
     auth
       ?.login(email, password)
       .then(() => navigate("/"))
-      .catch((err: Error) => setError(err.message));
+      .catch((err: Error) => auth?.setError(err.message));
   };
 
   if (auth?.user) return <Navigate to="/" replace />;
 
   return (
     <Container my="xl">
-      {error && (
+      {auth?.error && (
         <Alert
           icon={<IconAlertCircle size="1rem" />}
           title="Error occured!"
           color="red"
         >
-          {error}
+          {auth?.error}
         </Alert>
       )}
       <Title order={1} mb="xl">

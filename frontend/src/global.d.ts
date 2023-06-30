@@ -25,13 +25,15 @@ declare global {
 
   interface AuthContextType {
     user: User | null;
-    login: (email: string, password: string) => Promise<void | string>;
+    login: (email: string, password: string) => Promise<void>;
     signup: (
       email: string,
       password: string,
       fullname: string
-    ) => Promise<void | string>;
+    ) => Promise<void>;
     logout: () => void;
+    setError: React.Dispatch<React.SetStateAction<string>>;
+    error: string;
   }
 }
 

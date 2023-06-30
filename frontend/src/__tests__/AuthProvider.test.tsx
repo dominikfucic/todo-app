@@ -4,6 +4,7 @@ import { useContext } from "react";
 import AuthProvider, { AuthContext } from "../providers/AuthProvider";
 import { vi, it, describe, expect, Mock } from "vitest";
 import api from "../axios";
+import { AxiosError } from "axios";
 
 it("should render and provide correct context value to its children", () => {
   const { getByText } = render(
@@ -39,9 +40,24 @@ describe("login function", () => {
   const getItemSpy = vi.spyOn(Storage.prototype, "getItem");
   const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
 
+  vi.mock("../axios", async () => {
+    return {
+      default: {
+        create: vi.fn(() => ({
+          post: vi.fn(),
+          get: vi.fn(),
+        })),
+        AxiosError: {} as AxiosError,
+      },
+    };
+  });
+
   afterEach(() => {
-    vi.clearAllMocks();
     localStorage.clear();
+  });
+
+  afterAll(() => {
+    vi.clearAllMocks();
   });
 
   const mockUser = {
@@ -54,23 +70,8 @@ describe("login function", () => {
   const password = "mockPassword";
 
   it("should make correct API call, call getUser and update local storage accordingly", async () => {
-    vi.mock("axios", async () => {
-      return {
-        default: {
-          create: vi.fn(() => ({
-            post: vi.fn().mockResolvedValue({ data: { token: "mockToken" } }),
-            get: vi.fn().mockResolvedValue({
-              data: {
-                _id: "mockId",
-                firstName: "mockFirstName",
-                email: "mockEmail",
-              },
-            }),
-          })),
-          AxiosError: {},
-        },
-      };
-    });
+    api.post = vi.fn().mockResolvedValue({ data: { token: "mockToken" } });
+    api.get = vi.fn().mockResolvedValue({ data: mockUser });
 
     const { result } = renderHook(() => useContext(AuthContext), {
       wrapper: AuthProvider,
@@ -90,18 +91,19 @@ describe("login function", () => {
     expect(getItemSpy).toHaveBeenCalledWith("user");
   });
 
-  // it("should throw an error if there is no token", async () => {
-    
-  //   const { result } = renderHook(() => useContext(AuthContext), {
-  //     wrapper: AuthProvider,
-  //   });
+  it("should throw an error if API call fails", async () => {
+    api.post = vi.fn().mockRejectedValue({ message: "Something went wrong!" });
 
-  //   await act(async () => {
-  //     await result.current?.login(email, password);
-  //   });
+    const { result } = renderHook(() => useContext(AuthContext), {
+      wrapper: AuthProvider,
+    });
 
-  //   expect();
-  // });
+    await act(async () => {
+      await result.current?.login(email, password);
+    });
+
+    expect(result.current?.error).toEqual("Something went wrong");
+  });
 });
 
 // describe("signup function", () => {

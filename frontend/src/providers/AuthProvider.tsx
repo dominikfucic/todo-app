@@ -14,6 +14,7 @@ export default function AuthProvider({
     if (user) return JSON.parse(user);
     return null;
   });
+  const [error, setError] = React.useState("");
 
   const getUser = async () => {
     try {
@@ -31,7 +32,7 @@ export default function AuthProvider({
   const login = async (
     email: string,
     password: string
-  ): Promise<void | string> => {
+  ): Promise<void> => {
     const user = {
       email,
       password,
@@ -42,16 +43,14 @@ export default function AuthProvider({
       if (token) {
         localStorage.setItem("token", token);
         await getUser();
-        return;
       }
-      throw new Error("Authentication failed");
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.data) {
-          throw new Error(error.response.data.message);
+          setError(error.response.data.message);
         }
       }
-      throw new Error("Something went wrong");
+      setError("Something went wrong");
     }
   };
 
@@ -59,7 +58,7 @@ export default function AuthProvider({
     email: string,
     password: string,
     fullName: string
-  ): Promise<string> => {
+  ): Promise<void> => {
     const user = {
       email,
       password,
@@ -72,14 +71,13 @@ export default function AuthProvider({
         localStorage.setItem("token", token);
         await getUser();
       }
-      throw new Error("Authentication failed");
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.data) {
-          throw new Error(error.response.data.message);
+          setError(error.response.data.message);
         }
       }
-      throw new Error("Something went wrong");
+      setError("Something went wrong");
     }
   };
 
@@ -90,7 +88,9 @@ export default function AuthProvider({
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider
+      value={{ user, login, signup, logout, setError, error }}
+    >
       {children}
     </AuthContext.Provider>
   );
