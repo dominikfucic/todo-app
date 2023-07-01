@@ -10,7 +10,7 @@ const todoSchema = new Schema<Todo>({
     required: true,
   },
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     required: true,
   },
 });

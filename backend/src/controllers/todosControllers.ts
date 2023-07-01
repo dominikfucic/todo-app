@@ -22,10 +22,11 @@ export const deleteTodo: Handler = async (req, res, next) => {
 };
 export const editTodo: Handler = async (req, res, next) => {
   try {
-    await Todo.findByIdAndUpdate(req.params.id, {
+    await Todo.findByIdAndUpdate(req.params.todoId, {
       title: req.body.title,
+      completed: req.body.completed,
     });
-    res.status(200);
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }

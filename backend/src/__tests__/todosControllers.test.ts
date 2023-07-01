@@ -15,6 +15,7 @@ describe("/todos", () => {
     req = {} as Request;
     res = {
       status: jest.fn().mockReturnThis(),
+      sendStatus: jest.fn().mockReturnThis(),
       json: jest.fn(),
     } as any as Response;
     next = jest.fn() as NextFunction;
@@ -67,10 +68,10 @@ describe("/todos", () => {
   it("should update todo", async () => {
     req = {
       body: {
-        title: "updated todo",
+        comepleted: true,
       },
       params: {
-        id: "mockedId",
+        todoId: "mockedId",
       },
     } as any as Request;
 
@@ -78,10 +79,10 @@ describe("/todos", () => {
 
     await editTodo(req, res, next);
 
-    expect(Todo.findByIdAndUpdate).toHaveBeenCalledWith(req.params.id, {
-      title: req.body.title,
+    expect(Todo.findByIdAndUpdate).toHaveBeenCalledWith(req.params.todoId, {
+      completed: req.body.completed,
     });
-    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.sendStatus).toHaveBeenCalledWith(200);
     expect(next).not.toHaveBeenCalled();
   });
 
