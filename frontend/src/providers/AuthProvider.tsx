@@ -29,10 +29,7 @@ export default function AuthProvider({
     }
   };
 
-  const login = async (
-    email: string,
-    password: string
-  ): Promise<void> => {
+  const login = async (email: string, password: string): Promise<void> => {
     const user = {
       email,
       password,
@@ -43,6 +40,8 @@ export default function AuthProvider({
       if (token) {
         localStorage.setItem("token", token);
         await getUser();
+      } else {
+        setError("Something went wrong");
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -70,6 +69,8 @@ export default function AuthProvider({
       if (token) {
         localStorage.setItem("token", token);
         await getUser();
+      } else {
+        setError("Something went wrong");
       }
     } catch (error) {
       if (error instanceof AxiosError) {

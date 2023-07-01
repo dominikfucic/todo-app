@@ -6,6 +6,18 @@ import { vi, it, describe, expect, Mock } from "vitest";
 import api from "../axios";
 import { AxiosError } from "axios";
 
+vi.mock("../axios", async () => {
+  return {
+    default: {
+      create: vi.fn(() => ({
+        post: vi.fn(),
+        get: vi.fn(),
+      })),
+      AxiosError: {} as AxiosError,
+    },
+  };
+});
+
 it("should render and provide correct context value to its children", () => {
   const { getByText } = render(
     <AuthProvider>
@@ -40,29 +52,14 @@ describe("login function", () => {
   const getItemSpy = vi.spyOn(Storage.prototype, "getItem");
   const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
 
-  vi.mock("../axios", async () => {
-    return {
-      default: {
-        create: vi.fn(() => ({
-          post: vi.fn(),
-          get: vi.fn(),
-        })),
-        AxiosError: {} as AxiosError,
-      },
-    };
-  });
-
   afterEach(() => {
     localStorage.clear();
-  });
-
-  afterAll(() => {
     vi.clearAllMocks();
   });
 
   const mockUser = {
     _id: "mockId",
-    firstName: "mockFirstName",
+    fullName: "mockFullName",
     email: "mockEmail",
   };
 
@@ -82,7 +79,7 @@ describe("login function", () => {
     });
 
     expect(result.current?.user).toEqual(mockUser);
-    expect(api.post as Mock).toHaveBeenCalledWith("/users/login", {
+    expect(api.post).toHaveBeenCalledWith("/users/login", {
       email,
       password,
     });
@@ -92,7 +89,7 @@ describe("login function", () => {
   });
 
   it("should throw an error if API call fails", async () => {
-    api.post = vi.fn().mockRejectedValue({ message: "Something went wrong!" });
+    api.post = vi.fn().mockRejectedValue({});
 
     const { result } = renderHook(() => useContext(AuthContext), {
       wrapper: AuthProvider,
@@ -103,57 +100,67 @@ describe("login function", () => {
     });
 
     expect(result.current?.error).toEqual("Something went wrong");
+    expect(setItemSpy).not.toHaveBeenCalled();
   });
 });
 
-// describe("signup function", () => {
-//   vi.mock("axios", async () => {
-//     return {
-//       default: {
-//         create: vi.fn(() => ({
-//           post: vi.fn().mockResolvedValue({ data: { token: "mockToken" } }),
-//           get: vi.fn().mockResolvedValue({
-//             data: {
-//               _id: "mockId",
-//               firstName: "mockFirstName",
-//               email: "mockEmail",
-//             },
-//           }),
-//         })),
-//         AxiosError: {},
-//       },
-//     };
-//   });
+describe("signup function", () => {
+  const getItemSpy = vi.spyOn(Storage.prototype, "getItem");
+  const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
 
-//   const getItemSpy = vi.spyOn(Storage.prototype, "getItem");
-//   const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
+  const email = "mockEmail";
+  const password = "mockPassword";
+  const fullName = "mockFullName";
 
-//   afterAll(() => {
-//     vi.clearAllMocks();
-//     localStorage.clear();
-//   });
+  afterEach(() => {
+    localStorage.clear();
+    vi.clearAllMocks();
+  });
 
-//   const mockUser = {
-//     _id: "mockId",
-//     firstName: "mockFirstName",
-//     email: "mockEmail",
-//   };
+  const mockUser = {
+    _id: "mockId",
+    fullName: "mockFullName",
+    email: "mockEmail",
+  };
 
-//   it("should make correct API call, call getUser and update local storage accordingly", async () => {
-//     const { result } = renderHook(() => useContext(AuthContext), {
-//       wrapper: AuthProvider,
-//     });
+  it("should make correct API call, call getUser and update local storage accordingly", async () => {
+    api.post = vi.fn().mockResolvedValue({ data: { token: "mockToken" } });
+    api.get = vi.fn().mockResolvedValue({ data: mockUser });
 
-//     await act(async () => {
-//       await result.current?.login("mockEmail", "mockPassword");
-//     });
+    const { result } = renderHook(() => useContext(AuthContext), {
+      wrapper: AuthProvider,
+    });
 
-//     expect(result.current?.user).toEqual(mockUser);
-//     expect(setItemSpy).toHaveBeenCalledWith("token", "mockToken");
-//     expect(setItemSpy).toHaveBeenCalledWith("user", JSON.stringify(mockUser));
-//     expect(getItemSpy).toHaveBeenCalledWith("user");
-//   });
-// });
-// describe("logout function", () => {
-//   it("should update local storage and user state accordingly", () => {});
-// });
+    await act(async () => {
+      await result.current?.signup("mockEmail", "mockPassword", "mockFullName");
+    });
+
+    expect(api.post).toHaveBeenCalledWith("/users/signup", {
+      email,
+      password,
+      fullName,
+    });
+    expect(result.current?.user).toEqual(mockUser);
+    expect(setItemSpy).toHaveBeenCalledWith("token", "mockToken");
+    expect(setItemSpy).toHaveBeenCalledWith("user", JSON.stringify(mockUser));
+    expect(getItemSpy).toHaveBeenCalledWith("user");
+  });
+});
+
+describe("logout function", () => {
+  it("should update local storage and user state accordingly", async () => {
+    const removeItemSpy = vi.spyOn(Storage.prototype, "removeItem");
+
+    const { result } = renderHook(() => useContext(AuthContext), {
+      wrapper: AuthProvider,
+    });
+
+    await act(async () => {
+      result.current?.logout();
+    });
+
+    expect(result.current?.user).toEqual(null);
+    expect(removeItemSpy).toHaveBeenCalledWith("token");
+    expect(removeItemSpy).toHaveBeenCalledWith("user");
+  });
+});
