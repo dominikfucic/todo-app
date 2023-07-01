@@ -63,7 +63,6 @@ export const signup: Handler = async (req, res, next) => {
         try {
           await User.create(user);
         } catch (error) {
-          console.log(error)
           if (error instanceof MongoServerError && error.code === 11000) {
             res.status(409).json({ message: "User already exists." });
             return;

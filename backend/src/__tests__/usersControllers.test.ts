@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
-import { getUser, login, signup } from "../src/controllers/usersControllers";
-import { User } from "../src/models/User";
+import { getUser, login, signup } from "../controllers/usersControllers";
+import { User } from "../models/User";
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
 import { MongoServerError } from "mongodb";

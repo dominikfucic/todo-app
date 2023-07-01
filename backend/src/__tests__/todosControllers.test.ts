@@ -4,9 +4,9 @@ import {
   deleteTodo,
   editTodo,
   getTodos,
-} from "../src/controllers/todosControllers";
+} from "../controllers/todosControllers";
 import mongoose from "mongoose";
-import { Todo } from "../src/models/Todo";
+import { Todo } from "../models/Todo";
 
 describe("/todos", () => {
   let req: Request, res: Response, next: NextFunction;
