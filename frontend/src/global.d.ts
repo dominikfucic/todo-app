@@ -7,15 +7,15 @@ declare global {
   }
 
   interface TodoType {
-    _id?: number;
+    _id?: string;
     title: string;
     completed: boolean;
   }
 
   interface TodoContextType {
     todos: TodoType[];
-    removeTodo: (id: number) => void;
-    editTodo: (id: number | undefined, value: string) => void;
+    removeTodo: (id: string) => void;
+    editTodo: (id: string, value: string) => void;
     setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
     selected: TodoType | null;
     setSelected: React.Dispatch<React.SetStateAction<TodoType | null>>;
