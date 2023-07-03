@@ -14,8 +14,8 @@ export const addTodo: Handler = async (req, res, next) => {
 };
 export const deleteTodo: Handler = async (req, res, next) => {
   try {
-    await Todo.findByIdAndDelete(req.params.id);
-    res.status(200);
+    await Todo.findByIdAndDelete(req.params.todoId);
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }

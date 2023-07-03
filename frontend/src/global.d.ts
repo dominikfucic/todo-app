@@ -21,6 +21,7 @@ declare global {
     setSelected: React.Dispatch<React.SetStateAction<TodoType | null>>;
     addTodo: (todo: TodoType) => void;
     error: string | null;
+    getTodos: () => Promise<void>;
   }
 
   interface AuthContextType {

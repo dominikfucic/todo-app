@@ -4,9 +4,9 @@ const api: AxiosInstance = axios.create({
   baseURL: "/api",
 });
 
-if (!process.env.TEST_MODE) {
+if (import.meta.env.VITE_TEST_MODE) {
   api.interceptors.request.use((config) => {
-    const token = getTokenFromLocalStorage(); // Implement this function to retrieve the token from storage
+    const token = getTokenFromLocalStorage();
     if (token) {
       config.headers.Authorization = token;
     }

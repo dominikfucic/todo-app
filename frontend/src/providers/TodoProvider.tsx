@@ -1,6 +1,6 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import React from "react";
-import { api } from "../axios";
+import api from "../axios";
 
 export const TodoContext = React.createContext<TodoContextType | null>(null);
 
@@ -13,23 +13,12 @@ export default function TodoProvider({
   const [error, setError] = React.useState<string | null>(null);
   const [selected, setSelected] = React.useState<TodoType | null>(null);
 
-  React.useEffect(() => {
-    api
-      .get("/todos")
-      .then((res) => setTodos(res.data.todos))
-      .catch((error: AxiosError) => {
-        if (error.code === AxiosError.ERR_NETWORK) {
-          setError(error.message);
-        } else {
-          setError("Something went wrong.");
-        }
-      });
-  }, []);
-
-  function removeTodo(id: number) {
-    setTodos((prevState) => {
-      return prevState.filter((todo) => todo._id !== id);
-    });
+  async function removeTodo(id: number) {
+    try {
+      await api.delete(`/todos/deleteTodo/${id}`);
+    } catch (error) {
+      console.error('Failed to delete todo.', error)
+    }
   }
 
   function editTodo(id: number | undefined, value: string) {
@@ -43,9 +32,23 @@ export default function TodoProvider({
     });
   }
 
-  function addTodo(todo: TodoType) {
+  async function addTodo(todo: TodoType) {
     if (todo.title.length > 0) {
-      setTodos([...todos, todo]);
+      try {
+        const res = await api.post("/todos/addTodo", todo);
+        setTodos([...todos, res.data])
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+
+  async function getTodos() {
+    try {
+      const todos = await api.get("/todos");
+      setTodos(todos.data.todos);
+    } catch (error) {
+      setError("Couldn't get todos.");
     }
   }
 
@@ -60,6 +63,7 @@ export default function TodoProvider({
         setSelected,
         addTodo,
         error,
+        getTodos
       }}
     >
       {children}
