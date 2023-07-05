@@ -22,6 +22,7 @@ declare global {
     addTodo: (todo: TodoType) => void;
     error: string | null;
     getTodos: () => Promise<void>;
+    completeTodo: (id: string) => Promise<void>;
   }
 
   interface AuthContextType {

@@ -52,7 +52,7 @@ describe("/todos", () => {
   it("should delete todo", async () => {
     req = {
       params: {
-        id: "mockedId",
+        todoId: "mockedId",
       },
     } as any as Request;
 
@@ -60,8 +60,8 @@ describe("/todos", () => {
 
     await deleteTodo(req, res, next);
 
-    expect(Todo.findByIdAndDelete).toHaveBeenCalledWith(req.params.id);
-    expect(res.status).toHaveBeenCalledWith(200);
+    expect(Todo.findByIdAndDelete).toHaveBeenCalledWith(req.params.todoId);
+    expect(res.sendStatus).toHaveBeenCalledWith(200);
     expect(next).not.toHaveBeenCalled();
   });
 

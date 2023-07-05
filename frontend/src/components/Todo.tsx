@@ -1,9 +1,8 @@
 import React from "react";
-import { IconTrash, IconEdit } from "@tabler/icons-react";
+import { IconTrash, IconEdit, IconCheck } from "@tabler/icons-react";
 import { Input, ActionIcon, Group, Modal, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { TodoContext } from "../providers/TodoProvider";
-import Draggable from "./Draggable";
 
 export default function Todo({ todo }: { todo: TodoType }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -31,6 +30,13 @@ export default function Todo({ todo }: { todo: TodoType }) {
     setSelected(todo);
   }
 
+  function handleCompletion() {
+    if (todo._id) {
+      todoContext?.completeTodo(todo._id);
+      setSelected(null);
+    }
+  }
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="Edit todo">
@@ -40,11 +46,13 @@ export default function Todo({ todo }: { todo: TodoType }) {
           onChange={onChangeHandler}
           onFocus={() => inputRef.current?.select()}
         />
+
         <Group mt="md">
           <Button
             onClick={() => {
-              todoContext?.editTodo(todo._id, value);
+              todo._id && todoContext?.editTodo(todo._id, value);
               close();
+              setSelected(null);
             }}
           >
             Save
@@ -54,37 +62,47 @@ export default function Todo({ todo }: { todo: TodoType }) {
           </Button>
         </Group>
       </Modal>
-      <Draggable>
-        <Input
-          sx={todo.completed ? { textDecoration: "line-through" } : {}}
-          size="md"
-          rightSection={
-            todoContext?.selected?._id === todo._id && (
-              <Group spacing={5}>
-                {!todo.completed && (
-                  <ActionIcon variant="transparent" onClick={open}>
-                    <IconEdit size="1.5rem" />
-                  </ActionIcon>
-                )}
-                <ActionIcon
-                  variant="transparent"
-                  onClick={() =>
-                    todo._id ? todoContext?.removeTodo(todo._id) : null
-                  }
-                >
-                  <IconTrash size="1.5rem" />
+      <Input
+        sx={todo.completed ? { textDecoration: "line-through" } : {}}
+        size="md"
+        icon={
+          todoContext?.selected?._id === todo._id &&
+          !todo.completed && (
+            <ActionIcon
+              variant="transparent"
+              style={{ pointerEvents: "auto" }}
+              onClick={handleCompletion}
+            >
+              <IconCheck size="1.5rem" />
+            </ActionIcon>
+          )
+        }
+        rightSection={
+          todoContext?.selected?._id === todo._id && (
+            <Group spacing={5}>
+              {!todo.completed && (
+                <ActionIcon variant="transparent" onClick={open}>
+                  <IconEdit size="1.5rem" />
                 </ActionIcon>
-              </Group>
-            )
-          }
-          rightSectionWidth={todo.completed ? 0 : 80}
-          value={value}
-          onChange={onChangeHandler}
-          onKeyDown={(e) => e.code === "Enter" && setSelected(null)}
-          onClick={handleSelection}
-          readOnly={true}
-        />
-      </Draggable>
+              )}
+              <ActionIcon
+                variant="transparent"
+                onClick={() =>
+                  todo._id ? todoContext?.removeTodo(todo._id) : null
+                }
+              >
+                <IconTrash size="1.5rem" />
+              </ActionIcon>
+            </Group>
+          )
+        }
+        rightSectionWidth={todo.completed ? 0 : 80}
+        value={value}
+        onChange={onChangeHandler}
+        onKeyDown={(e) => e.code === "Enter" && setSelected(null)}
+        onClick={handleSelection}
+        readOnly={true}
+      />
     </>
   );
 }

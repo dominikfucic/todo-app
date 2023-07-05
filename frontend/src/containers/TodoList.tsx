@@ -1,16 +1,11 @@
 import React from "react";
-import {
-  Container,
-  Title,
-  Divider,
-  Stack,
-} from "@mantine/core";
+import { Container, Title, Divider, Stack } from "@mantine/core";
 import Todo from "../components/Todo";
 import { TodoContext } from "../providers/TodoProvider";
 
 export default function TodoList() {
   const todoContext = React.useContext(TodoContext);
-  const todos = todoContext?.todos
+  const todos = todoContext?.todos;
 
   React.useEffect(() => {
     todoContext?.getTodos();
@@ -22,7 +17,8 @@ export default function TodoList() {
       <Divider my="xl" />
       <Stack>
         {todos?.map(
-          (todo) => todo.completed === false && <Todo key={todo._id} todo={todo} />
+          (todo) =>
+            todo.completed === false && <Todo key={todo._id} todo={todo} />
         )}
       </Stack>
       <Title mt="lg">Completed</Title>

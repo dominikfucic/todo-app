@@ -25,15 +25,36 @@ export default function TodoProvider({
     }
   }
 
-  function editTodo(id: string, value: string) {
-    setTodos((prevState) => {
-      return prevState.map((todo) => {
-        if (todo._id === id) {
-          todo.title = value;
-        }
-        return todo;
+  async function completeTodo(id: string) {
+    try {
+      await api.patch(`/todos/editTodo/${id}`, { completed: true });
+      setTodos((prevState) => {
+        return prevState.map((todo) => {
+          if (todo._id === id) {
+            todo.completed = true;
+          }
+          return todo;
+        });
       });
-    });
+    } catch (error) {
+      console.error("Failed to complete todo.", error);
+    }
+  }
+
+  async function editTodo(id: string, value: string) {
+    try {
+      await api.patch(`/todos/editTodo/${id}`, { title: value });
+      setTodos((prevState) => {
+        return prevState.map((todo) => {
+          if (todo._id === id) {
+            todo.title = value;
+          }
+          return todo;
+        });
+      });
+    } catch (error) {
+      console.error("Failed to edit todo.", error);
+    }
   }
 
   async function addTodo(todo: TodoType) {
@@ -74,6 +95,7 @@ export default function TodoProvider({
         addTodo,
         error,
         getTodos,
+        completeTodo
       }}
     >
       {children}
