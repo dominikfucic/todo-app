@@ -3,9 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-ENV VITE_TEST_MODE=true
 RUN npm run test || exit 1
-ENV VITE_TEST_MODE=false
 RUN npm run build
 
 FROM nginx:1.25-alpine3.17

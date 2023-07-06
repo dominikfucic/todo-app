@@ -9,8 +9,8 @@ services:
       - 80:80
     volumes:
       - ./frontend:/app
-    environment:
-      - NODE_ENV=production
+    env_file:
+      - .env
 
   backend:
     build:
@@ -20,9 +20,8 @@ services:
       - 3001:3001
     depends_on:
       - db
-    environment:
-      - DB_HOST=db
-      - JWT_SECRET=test
+    env_file:
+      - .env
 
   db:
     image: mongo
