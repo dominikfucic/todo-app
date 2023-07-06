@@ -54,14 +54,18 @@ export const signup: Handler = async (req, res, next) => {
           next(error);
           return;
         }
-        const user: User = {
+        const data: User = {
           fullName: req.body.fullName,
           email: req.body.email,
           password: hashedPassword,
           salt: salt,
         };
         try {
-          await User.create(user);
+          const user = await User.create(data);
+          const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "7d",
+          });
+          res.status(200).json({ token });
         } catch (error) {
           if (error instanceof MongoServerError && error.code === 11000) {
             res.status(409).json({ message: "User already exists." });
@@ -70,10 +74,6 @@ export const signup: Handler = async (req, res, next) => {
             throw new Error(error);
           }
         }
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-          expiresIn: "7d",
-        });
-        res.status(200).json({ token });
       }
     );
   } catch (error) {

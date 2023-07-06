@@ -2,7 +2,7 @@ import { render, renderHook, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { useContext } from "react";
 import AuthProvider, { AuthContext } from "../providers/AuthProvider";
-import { vi, it, describe, expect, Mock } from "vitest";
+import { vi, it, describe, expect } from "vitest";
 import api from "../axios";
 import { AxiosError } from "axios";
 

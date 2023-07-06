@@ -1,11 +1,8 @@
-import React from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 import {
-  Anchor,
   Group,
-  Text,
   PasswordInput,
   Container,
   Button,

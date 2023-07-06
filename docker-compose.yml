@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=production
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - JWT_SECRET=test
+
+  db:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import {
@@ -14,7 +13,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
-import Draggable from "../components/Draggable";
 
 export default function Login() {
   const auth = useAuth();
